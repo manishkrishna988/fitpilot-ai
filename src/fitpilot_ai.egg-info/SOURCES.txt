@@ -1,0 +1,12 @@
+README.md
+pyproject.toml
+src/fitpilot/__init__.py
+src/fitpilot/main.py
+src/fitpilot/api/__init__.py
+src/fitpilot/api/health.py
+src/fitpilot_ai.egg-info/PKG-INFO
+src/fitpilot_ai.egg-info/SOURCES.txt
+src/fitpilot_ai.egg-info/dependency_links.txt
+src/fitpilot_ai.egg-info/requires.txt
+src/fitpilot_ai.egg-info/top_level.txt
+tests/test_health.py

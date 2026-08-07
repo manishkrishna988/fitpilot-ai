@@ -1,0 +1,20 @@
+Metadata-Version: 2.4
+Name: fitpilot-ai
+Version: 0.1.0
+Summary: A production-oriented AI fitness planning and progress-analysis application.
+Requires-Python: <3.14,>=3.13
+Description-Content-Type: text/markdown
+Requires-Dist: fastapi[standard]
+Provides-Extra: dev
+Requires-Dist: httpx2; extra == "dev"
+Requires-Dist: pytest; extra == "dev"
+
+# FitPilot AI
+
+FitPilot AI is a production-oriented fitness planning and progress-analysis application.
+
+The project will create structured workout recommendations, record completed sessions, evaluate adherence and performance, retrieve information from a curated fitness knowledge base, and recommend controlled adjustments for future training.
+
+## Current Status
+
+Project foundation and development environment setup.
