@@ -15,7 +15,9 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "httpx2",
+    "mypy",
     "pytest",
+    "ruff",
 ]
 
 [tool.setuptools.packages.find]
@@ -23,3 +25,20 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py313"
+
+[tool.ruff.lint]
+select = [
+    "E",
+    "F",
+    "I",
+    "UP",
+]
+
+[tool.mypy]
+python_version = "3.13"
+strict = true
+files = ["src", "tests"]

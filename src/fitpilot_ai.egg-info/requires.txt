@@ -1,5 +1,0 @@
-fastapi[standard]
-
-[dev]
-httpx2
-pytest
