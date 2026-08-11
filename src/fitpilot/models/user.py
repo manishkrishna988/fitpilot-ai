@@ -1,6 +1,6 @@
 from enum import StrEnum
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class FitnessGoal(StrEnum):
@@ -25,3 +25,16 @@ class UserProfileCreate(BaseModel):
     training_days_per_week: int = Field(ge=1, le=7)
     available_equipment: list[str] = Field(default_factory=list)
     exercise_limitations: list[str] = Field(default_factory=list)
+
+
+class UserProfileResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    name: str
+    age: int
+    height_cm: float
+    weight_kg: float
+    goal: FitnessGoal
+    experience_level: ExperienceLevel
+    training_days_per_week: int
