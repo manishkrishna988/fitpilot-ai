@@ -31,6 +31,11 @@ def create_user_profile(
         goal=profile.goal.value,
         experience_level=profile.experience_level.value,
         training_days_per_week=profile.training_days_per_week,
+        exercise_limitations=[
+            limitation.strip()
+            for limitation in profile.exercise_limitations
+            if limitation.strip()
+        ],
     )
 
     for equipment_name in profile.available_equipment:

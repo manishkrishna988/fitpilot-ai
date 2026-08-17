@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Float, ForeignKey, Integer, String, Table
+from sqlalchemy import JSON, Column, Float, ForeignKey, Integer, String, Table
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from fitpilot.db.base import Base
@@ -36,4 +36,9 @@ class User(Base):
     available_equipment: Mapped[list[Equipment]] = relationship(
         secondary=user_equipment,
         back_populates="users",
+    )
+
+    exercise_limitations: Mapped[list[str]] = mapped_column(
+        JSON,
+        default=list,
     )
