@@ -58,8 +58,8 @@ def test_get_existing_user_profile(client: TestClient) -> None:
         "goal": "fat_loss",
         "experience_level": "beginner",
         "training_days_per_week": 3,
-        "available_equipment": [],
-        "exercise_limitations": [],
+        "available_equipment": ["Dumbbells", "BARBELL"],
+        "exercise_limitations": [" knee pain ", "Avoid overhead press"],
     }
 
     create_response = client.post("/users/profile", json=payload)
@@ -70,6 +70,18 @@ def test_get_existing_user_profile(client: TestClient) -> None:
 
     assert response.status_code == 200
     assert response.json()["name"] == "Test User"
+
+    body = response.json()
+
+    assert body["available_equipment"] == [
+        "dumbbells",
+        "barbell",
+    ]
+
+    assert body["exercise_limitations"] == [
+        "knee pain",
+        "Avoid overhead press",
+    ]
 
 
 def test_get_missing_user_returns_404(client: TestClient) -> None:

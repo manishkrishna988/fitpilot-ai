@@ -1,6 +1,6 @@
 from enum import StrEnum
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class FitnessGoal(StrEnum):
@@ -38,3 +38,13 @@ class UserProfileResponse(BaseModel):
     goal: FitnessGoal
     experience_level: ExperienceLevel
     training_days_per_week: int
+    available_equipment: list[str]
+    exercise_limitations: list[str]
+
+    @field_validator("available_equipment", mode="before")
+    @classmethod
+    def serialize_equipment(cls, value: object) -> list[str]:
+        if isinstance(value, list):
+            return [item.name if hasattr(item, "name") else str(item) for item in value]
+
+        return []
