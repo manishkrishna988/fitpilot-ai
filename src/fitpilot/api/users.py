@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from fitpilot.db.models import User
+from fitpilot.db.models import Equipment, User
 from fitpilot.db.session import get_db
 from fitpilot.models.user import UserProfileCreate, UserProfileResponse
 
@@ -32,6 +32,21 @@ def create_user_profile(
         experience_level=profile.experience_level.value,
         training_days_per_week=profile.training_days_per_week,
     )
+
+    for equipment_name in profile.available_equipment:
+        equipment_name = equipment_name.strip().lower()
+
+        if not equipment_name:
+            continue
+
+        equipment = (
+            db.query(Equipment).filter(Equipment.name == equipment_name).one_or_none()
+        )
+
+        if equipment is None:
+            equipment = Equipment(name=equipment_name)
+
+        user.available_equipment.append(equipment)
 
     db.add(user)
     db.commit()

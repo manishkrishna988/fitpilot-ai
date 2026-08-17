@@ -1,4 +1,8 @@
 from fastapi.testclient import TestClient
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+
+from fitpilot.db.models import Equipment
 
 
 def test_create_valid_user_profile(client: TestClient) -> None:
@@ -73,3 +77,40 @@ def test_get_missing_user_returns_404(client: TestClient) -> None:
 
     assert response.status_code == 404
     assert response.json() == {"detail": "User not found"}
+
+
+def test_create_user_profile_persists_normalized_equipment(
+    client: TestClient,
+    db_session: Session,
+) -> None:
+    response = client.post(
+        "/users/profile",
+        json={
+            "name": "Equipment Test",
+            "age": 29,
+            "height_cm": 175,
+            "weight_kg": 100,
+            "goal": "fat_loss",
+            "experience_level": "intermediate",
+            "training_days_per_week": 4,
+            "available_equipment": [
+                " Dumbbells ",
+                "BARBELL",
+                "machines",
+                "   ",
+            ],
+            "exercise_limitations": [],
+        },
+    )
+
+    assert response.status_code == 201
+
+    equipment = db_session.scalars(select(Equipment).order_by(Equipment.name)).all()
+
+    equipment_names = [item.name for item in equipment]
+
+    assert equipment_names == [
+        "barbell",
+        "dumbbells",
+        "machines",
+    ]
