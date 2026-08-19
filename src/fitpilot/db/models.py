@@ -1,4 +1,6 @@
-from sqlalchemy import JSON, Column, Float, ForeignKey, Integer, String, Table
+from datetime import date
+
+from sqlalchemy import JSON, Column, Date, Float, ForeignKey, Integer, String, Table
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from fitpilot.db.base import Base
@@ -41,4 +43,37 @@ class User(Base):
     exercise_limitations: Mapped[list[str]] = mapped_column(
         JSON,
         default=list,
+    )
+
+    workout_plans: Mapped[list["WorkoutPlan"]] = relationship(
+        back_populates="user",
+    )
+
+
+class WorkoutPlan(Base):
+    __tablename__ = "workout_plans"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    week_start_date: Mapped[date] = mapped_column(Date)
+    status: Mapped[str] = mapped_column(String(50), default="active")
+
+    user: Mapped["User"] = relationship(
+        back_populates="workout_plans",
+    )
+    workout_days: Mapped[list["WorkoutDay"]] = relationship(
+        back_populates="workout_plan",
+    )
+
+
+class WorkoutDay(Base):
+    __tablename__ = "workout_days"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    workout_plan_id: Mapped[int] = mapped_column(ForeignKey("workout_plans.id"))
+    day_number: Mapped[int] = mapped_column(Integer)
+    name: Mapped[str] = mapped_column(String(100))
+
+    workout_plan: Mapped["WorkoutPlan"] = relationship(
+        back_populates="workout_days",
     )
