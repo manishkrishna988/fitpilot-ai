@@ -2,7 +2,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from fitpilot.db.models import PlannedExercise, User, WorkoutDay
+from fitpilot.db.models import Equipment, PlannedExercise, User, WorkoutDay
 
 
 def test_create_workout_plan_generates_five_day_template(
@@ -19,6 +19,13 @@ def test_create_workout_plan_generates_five_day_template(
         training_days_per_week=5,
         exercise_limitations=[],
     )
+
+    user.available_equipment = [
+        Equipment(name="barbell"),
+        Equipment(name="dumbbells"),
+        Equipment(name="cable_machine"),
+        Equipment(name="machines"),
+    ]
 
     db_session.add(user)
     db_session.commit()

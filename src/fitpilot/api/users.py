@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from fitpilot.db.models import Equipment, User
 from fitpilot.db.session import get_db
 from fitpilot.models.user import UserProfileCreate, UserProfileResponse
+from fitpilot.services.workout_templates import EQUIPMENT_ALIASES
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
@@ -38,11 +39,20 @@ def create_user_profile(
         ],
     )
 
+    seen_equipment: set[str] = set()
+
     for equipment_name in profile.available_equipment:
         equipment_name = equipment_name.strip().lower()
 
         if not equipment_name:
             continue
+
+        equipment_name = EQUIPMENT_ALIASES.get(equipment_name, equipment_name)
+
+        if equipment_name in seen_equipment:
+            continue
+
+        seen_equipment.add(equipment_name)
 
         equipment = (
             db.query(Equipment).filter(Equipment.name == equipment_name).one_or_none()

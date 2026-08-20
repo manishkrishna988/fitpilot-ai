@@ -43,6 +43,8 @@ def create_workout_plan(
             detail="No workout template available for this training frequency",
         )
 
+    available_equipment = {equipment.name for equipment in user.available_equipment}
+
     for day_number, day_name in enumerate(template, start=1):
         workout_day = WorkoutDay(
             day_number=day_number,
@@ -51,7 +53,15 @@ def create_workout_plan(
 
         exercise_template = EXERCISE_TEMPLATES.get(day_name, [])
 
-        for exercise_name, target_sets, target_reps in exercise_template:
+        for (
+            exercise_name,
+            target_sets,
+            target_reps,
+            required_equipment,
+        ) in exercise_template:
+            if required_equipment not in available_equipment:
+                continue
+
             workout_day.planned_exercises.append(
                 PlannedExercise(
                     name=exercise_name,

@@ -107,11 +107,12 @@ def test_create_user_profile_persists_normalized_equipment(
             "training_days_per_week": 4,
             "available_equipment": [
                 " Dumbbells ",
-                "BARBELL",
+                "dumbells",
+                "BARBELLS",
+                "cable machine",
                 "machines",
-                "   ",
+                "  ",
             ],
-            "exercise_limitations": [],
         },
     )
 
@@ -123,6 +124,7 @@ def test_create_user_profile_persists_normalized_equipment(
 
     assert equipment_names == [
         "barbell",
+        "cable_machine",
         "dumbbells",
         "machines",
     ]
