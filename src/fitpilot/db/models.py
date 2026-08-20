@@ -77,3 +77,20 @@ class WorkoutDay(Base):
     workout_plan: Mapped["WorkoutPlan"] = relationship(
         back_populates="workout_days",
     )
+    planned_exercises: Mapped[list["PlannedExercise"]] = relationship(
+        back_populates="workout_day",
+    )
+
+
+class PlannedExercise(Base):
+    __tablename__ = "planned_exercises"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    workout_day_id: Mapped[int] = mapped_column(ForeignKey("workout_days.id"))
+    name: Mapped[str] = mapped_column(String(100))
+    target_sets: Mapped[int] = mapped_column(Integer)
+    target_reps: Mapped[int] = mapped_column(Integer)
+
+    workout_day: Mapped["WorkoutDay"] = relationship(
+        back_populates="planned_exercises",
+    )

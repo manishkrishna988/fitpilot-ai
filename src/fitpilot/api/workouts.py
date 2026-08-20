@@ -3,10 +3,10 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from fitpilot.db.models import User, WorkoutDay, WorkoutPlan
+from fitpilot.db.models import PlannedExercise, User, WorkoutDay, WorkoutPlan
 from fitpilot.db.session import get_db
 from fitpilot.models.workout import WorkoutPlanCreate, WorkoutPlanResponse
-from fitpilot.services.workout_templates import WORKOUT_TEMPLATES
+from fitpilot.services.workout_templates import EXERCISE_TEMPLATES, WORKOUT_TEMPLATES
 
 router = APIRouter(prefix="/workout-plans", tags=["Workout Plans"])
 
@@ -44,12 +44,23 @@ def create_workout_plan(
         )
 
     for day_number, day_name in enumerate(template, start=1):
-        workout_plan.workout_days.append(
-            WorkoutDay(
-                day_number=day_number,
-                name=day_name,
-            )
+        workout_day = WorkoutDay(
+            day_number=day_number,
+            name=day_name,
         )
+
+        exercise_template = EXERCISE_TEMPLATES.get(day_name, [])
+
+        for exercise_name, target_sets, target_reps in exercise_template:
+            workout_day.planned_exercises.append(
+                PlannedExercise(
+                    name=exercise_name,
+                    target_sets=target_sets,
+                    target_reps=target_reps,
+                )
+            )
+
+        workout_plan.workout_days.append(workout_day)
 
     db.add(workout_plan)
     db.commit()

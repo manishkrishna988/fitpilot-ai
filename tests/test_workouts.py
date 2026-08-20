@@ -2,7 +2,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from fitpilot.db.models import User, WorkoutDay
+from fitpilot.db.models import PlannedExercise, User, WorkoutDay
 
 
 def test_create_workout_plan_generates_five_day_template(
@@ -46,6 +46,32 @@ def test_create_workout_plan_generates_five_day_template(
         "Legs",
         "Upper",
         "Lower",
+    ]
+
+    planned_exercises = db_session.scalars(
+        select(PlannedExercise).order_by(PlannedExercise.id)
+    ).all()
+
+    assert len(planned_exercises) == 15
+
+    exercise_names = [exercise.name for exercise in planned_exercises]
+
+    assert exercise_names == [
+        "Bench Press",
+        "Incline Dumbbell Press",
+        "Triceps Pushdown",
+        "Lat Pulldown",
+        "Seated Row",
+        "Biceps Curl",
+        "Leg Press",
+        "Leg Curl",
+        "Leg Extension",
+        "Bench Press",
+        "Seated Row",
+        "Shoulder Press",
+        "Leg Press",
+        "Leg Curl",
+        "Calf Raise",
     ]
 
 
