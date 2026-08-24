@@ -36,7 +36,7 @@ def override_get_db() -> Generator[Session]:
 
 
 @pytest.fixture
-def db_session() -> Generator[Session]:
+def db_session(test_database: None) -> Generator[Session]:
     db = TestingSessionLocal()
 
     try:
@@ -46,13 +46,20 @@ def db_session() -> Generator[Session]:
 
 
 @pytest.fixture
-def client() -> Generator[TestClient]:
-    Base.metadata.create_all(bind=test_engine)
-
+def client(test_database: None) -> Generator[TestClient]:
     app.dependency_overrides[get_db] = override_get_db
 
     with TestClient(app) as test_client:
         yield test_client
 
     app.dependency_overrides.clear()
+    Base.metadata.drop_all(bind=test_engine)
+
+
+@pytest.fixture
+def test_database() -> Generator[None]:
+    Base.metadata.create_all(bind=test_engine)
+
+    yield
+
     Base.metadata.drop_all(bind=test_engine)

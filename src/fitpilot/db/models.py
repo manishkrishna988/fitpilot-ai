@@ -94,3 +94,13 @@ class PlannedExercise(Base):
     workout_day: Mapped["WorkoutDay"] = relationship(
         back_populates="planned_exercises",
     )
+
+
+class Exercise(Base):
+    __tablename__ = "exercises"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(100), unique=True)
+    required_equipment: Mapped[str] = mapped_column(String(100))
+    movement_category: Mapped[str] = mapped_column(String(100))
+    difficulty: Mapped[str] = mapped_column(String(50))
