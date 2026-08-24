@@ -32,6 +32,12 @@ EXERCISE_TEMPLATES: dict[str, list[tuple[str, int, int, str]]] = {
     ],
 }
 
+EXERCISE_SUBSTITUTIONS: dict[str, tuple[str, int, int, str]] = {
+    "Bench Press": ("Dumbbell Bench Press", 3, 10, "dumbbells"),
+    "Leg Press": ("Goblet Squat", 3, 12, "dumbbells"),
+}
+
+
 EQUIPMENT_ALIASES: dict[str, str] = {
     "dumbbell": "dumbbells",
     "dumbells": "dumbbells",

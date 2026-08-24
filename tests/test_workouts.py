@@ -113,3 +113,49 @@ def test_create_workout_plan_rejects_unsupported_training_frequency(
     assert response.json() == {
         "detail": "No workout template available for this training frequency"
     }
+
+
+def test_workout_plan_uses_equipment_substitutions(
+    client: TestClient,
+    db_session: Session,
+) -> None:
+    user = User(
+        name="Substitution Test User",
+        age=29,
+        height_cm=175,
+        weight_kg=100,
+        goal="strength",
+        experience_level="intermediate",
+        training_days_per_week=5,
+        exercise_limitations=[],
+    )
+
+    user.available_equipment = [
+        Equipment(name="dumbbells"),
+    ]
+
+    db_session.add(user)
+    db_session.commit()
+    db_session.refresh(user)
+
+    response = client.post(
+        "/workout-plans",
+        json={
+            "user_id": user.id,
+            "week_start_date": "2026-08-24",
+        },
+    )
+
+    assert response.status_code == 201
+
+    planned_exercises = db_session.scalars(
+        select(PlannedExercise).order_by(PlannedExercise.id)
+    ).all()
+
+    exercise_names = [exercise.name for exercise in planned_exercises]
+
+    assert "Dumbbell Bench Press" in exercise_names
+    assert "Goblet Squat" in exercise_names
+
+    assert "Bench Press" not in exercise_names
+    assert "Leg Press" not in exercise_names

@@ -6,7 +6,11 @@ from sqlalchemy.orm import Session
 from fitpilot.db.models import PlannedExercise, User, WorkoutDay, WorkoutPlan
 from fitpilot.db.session import get_db
 from fitpilot.models.workout import WorkoutPlanCreate, WorkoutPlanResponse
-from fitpilot.services.workout_templates import EXERCISE_TEMPLATES, WORKOUT_TEMPLATES
+from fitpilot.services.workout_templates import (
+    EXERCISE_SUBSTITUTIONS,
+    EXERCISE_TEMPLATES,
+    WORKOUT_TEMPLATES,
+)
 
 router = APIRouter(prefix="/workout-plans", tags=["Workout Plans"])
 
@@ -60,7 +64,20 @@ def create_workout_plan(
             required_equipment,
         ) in exercise_template:
             if required_equipment not in available_equipment:
-                continue
+                substitution = EXERCISE_SUBSTITUTIONS.get(exercise_name)
+
+                if substitution is None:
+                    continue
+
+                (
+                    exercise_name,
+                    target_sets,
+                    target_reps,
+                    required_equipment,
+                ) = substitution
+
+                if required_equipment not in available_equipment:
+                    continue
 
             workout_day.planned_exercises.append(
                 PlannedExercise(
